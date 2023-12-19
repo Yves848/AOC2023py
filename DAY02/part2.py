@@ -11,8 +11,6 @@ print(file)
 D = open(os.path.join(file,"Data.txt")).read().strip()
 L = D.split("\n")
 
-possibles = {"red": 12, "green": 13, "blue":14}
-
 Games = {}
 sum = 0
 i = 0
@@ -21,18 +19,16 @@ for G in L:
   game,balls = G.split(":")
   Games[game]=balls.split(";")
   print(game)
-  possible = True
+  minimums = {"red": 0, "green":0, "blue":0}
   for ball in Games[game]:
     print(ball)
     for b in ball.split(','):
-      pair = b.strip().split(' ')
-      if int(pair[0]) > possibles[pair[1]]:
-        print(game+" not possible")
-        possible = False
-        break
-  if possible:
-      sum += i
+      nb,color = b.strip().split(' ')
+      if minimums[color] < int(nb):
+        minimums[color] = int(nb)
+  r = 1
+  for n in minimums:
+    r = r * minimums[n]
+  sum += r
 
-
-
-print(sum)  
+print(sum)
