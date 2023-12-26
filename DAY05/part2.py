@@ -1,58 +1,36 @@
-import os
+
 import sys
 import math
 
-os.system('cls')
 
-file = os.path.dirname(__file__)
-
-D = open(os.path.join(file,"Data.txt")).read().strip()
-C = D.split('\n\n')
-
-# print(C)
-
+inputs, *blocks = open(0).read().split("\n\n")
+inputs = list(map(int,inputs.split(':')[1].split()))
 seeds = []
-for c in (C[0].strip().split(":"))[1].strip().split(" "):
-  seeds.append(int(c))
 
-# print(seeds)
+for i in range(0, len(inputs), 2):
+  seeds.append((inputs[i], inputs[i]+ inputs[i+1]))
 
-maps = []
-i = 1
-while i < len(C):
-  map = C[i].strip().split('\n')
-  # print(map)
-  j = 1
-  maps2 = []
-  while j < len(map):
-    maps2.append(map[j])
-    j+=1
-  maps.append(maps2)
-  i+=1
+for block in blocks:
+  ranges = []
+  for line in block.splitlines()[1:]:
+    ranges.append(list(map(int, line.split())))
 
-lowest = sys.maxsize
-index = 0
-while index < len(seeds) - 2:
-  rseeds = range(seeds[index], seeds[index]+seeds[index+1])
-  for seed in rseeds:
-    # print(f"seed {seed}")
-    s=seed
-    for ma in maps:
-      for map in ma:
-        # print(map)
-        D,S,R = map.split(' ')
-        # print(f"D={D} S={S} R={R}")
-        source = range(int(S),(int(S)+int(R))) 
-        if s in source:
-          # print(f"s={s} in {source}")
-          offset = s - int(S)
-          destination = range(int(D),(int(D)+int(R)))
-          s = (int(D) + offset)
-          # if s < lowest:
-          #   lowest = s
-          break
-    if s < lowest:
-      lowest = s      
-  index +=2
-print(f"lowest: {lowest}")   
-#the destination range start, the source range start, and the range length.
+  new= []
+
+  while len(seeds) > 0:
+    s,e = seeds.pop()
+    for a,b,c in ranges:
+      os = max(s,b)
+      oe = min(e, b + c)
+      if os < oe:
+        new.append((os - b + a, oe - b + a))
+        if os > s:
+          seeds.append((s,os))
+        if e > oe:
+          seeds.append((oe,e))
+        break
+    else:
+      new.append((s,e))
+  seeds = new    
+
+print(min(seeds)[0])
