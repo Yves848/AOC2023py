@@ -1,7 +1,7 @@
 #A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, or 2.
-letter_map = {"T":"A", "J":"B","Q":"C", "K":"D", "A":"E"}
+letter_map = {"T":"A", "J":".","Q":"C", "K":"D", "A":"E"}
 
-def classify(hand):
+def score(hand):
   counts = [hand.count(card) for card in hand]
   if 5 in counts:
      return 6
@@ -16,6 +16,19 @@ def classify(hand):
   if 2 in counts:
      return 1
   return 0
+
+def replacement(hand):
+   if hand == "":
+      return [""]
+   
+   return [
+          x + y
+          for x in ("23456789TQKA" if hand[0]=="J" else hand[0])
+          for y in replacement(hand[1:])
+          ]
+
+def classify(hand):
+   return max(map(score, replacement(hand)))
 
 def strenght(hand):
     return (classify(hand),[letter_map.get(card,card) for card in hand])
